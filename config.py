@@ -10,8 +10,8 @@ GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 GMAIL_RECIPIENT = os.getenv("GMAIL_RECIPIENT")
 
 SUBREDDITS = [s.strip() for s in os.getenv("SUBREDDITS", "TheRaceTo10Million,stocks,ValueInvesting").split(",")]
-POSTS_PER_SUBREDDIT = int(os.getenv("POSTS_PER_SUBREDDIT", "10"))
-TOP_COMMENTS_COUNT = int(os.getenv("TOP_COMMENTS_COUNT", "3"))
+POSTS_PER_SUBREDDIT = int(os.getenv("POSTS_PER_SUBREDDIT") or "10")
+TOP_COMMENTS_COUNT = int(os.getenv("TOP_COMMENTS_COUNT") or "3")
 DIGEST_MODE = os.getenv("DIGEST_MODE", "daily")  # "daily" ou "weekly"
 
 
