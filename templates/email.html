@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Digest</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f5; color: #18181b; }
+    .wrapper { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+    .header { background: #ff4500; border-radius: 12px 12px 0 0; padding: 28px 32px; text-align: center; }
+    .header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .header p { color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 4px; }
+    .body { background: #fff; padding: 32px; border-radius: 0 0 12px 12px; }
+    .section { margin-bottom: 32px; }
+    .section:last-child { margin-bottom: 0; }
+    .subreddit-title { font-size: 18px; font-weight: 700; color: #ff4500; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #f4f4f5; }
+    .tag-group { margin-bottom: 12px; }
+    .tag-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #71717a; margin-bottom: 6px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { background: #f4f4f5; border-radius: 20px; padding: 4px 12px; font-size: 13px; color: #3f3f46; }
+    .sentiment { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
+    .sentiment-positivo { background: #dcfce7; color: #15803d; }
+    .sentiment-negativo { background: #fee2e2; color: #b91c1c; }
+    .sentiment-neutro { background: #f4f4f5; color: #52525b; }
+    .sentiment-misto { background: #fef9c3; color: #854d0e; }
+    .top-posts { margin-top: 14px; }
+    .post-item { padding: 10px 0; border-bottom: 1px solid #f4f4f5; }
+    .post-item:last-child { border-bottom: none; }
+    .post-title { font-size: 14px; font-weight: 500; color: #18181b; }
+    .post-title a { color: #18181b; text-decoration: none; }
+    .post-title a:hover { color: #ff4500; }
+    .post-reason { font-size: 12px; color: #71717a; margin-top: 3px; }
+    .insights-box { background: #fff7ed; border-left: 4px solid #ff4500; border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; }
+    .insights-box h3 { font-size: 14px; font-weight: 600; color: #c2410c; margin-bottom: 10px; }
+    .insights-box ul { padding-left: 18px; }
+    .insights-box li { font-size: 14px; color: #431407; margin-bottom: 6px; line-height: 1.5; }
+    .highlights-box { background: #fafafa; border-radius: 8px; padding: 16px 20px; }
+    .highlights-box h3 { font-size: 14px; font-weight: 600; color: #3f3f46; margin-bottom: 10px; }
+    .highlights-box li { font-size: 14px; color: #52525b; margin-bottom: 6px; line-height: 1.5; padding-left: 18px; }
+    .footer { text-align: center; padding: 20px; font-size: 12px; color: #a1a1aa; }
+    .divider { height: 1px; background: #f4f4f5; margin: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1>Reddit Digest</h1>
+      <p>{{ today }}</p>
+    </div>
+    <div class="body">
+
+      {% set cross = summary.get('cross_subreddit_insights', []) %}
+      {% if cross %}
+      <div class="insights-box">
+        <h3>Insights entre comunidades</h3>
+        <ul>
+          {% for item in cross %}<li>{{ item }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% for name in subreddits %}
+        {% set data = summary.get('subreddits', {}).get(name, {}) %}
+        {% if data %}
+        <div class="section">
+          <div class="subreddit-title">r/{{ name }}</div>
+
+          {% if data.get('analysis') %}
+          <div style="font-size:14px; line-height:1.7; color:#3f3f46; margin-bottom:16px; white-space:pre-line;">{{ data.analysis }}</div>
+          {% endif %}
+
+          {% if data.get('main_themes') %}
+          <div class="tag-group">
+            <div class="tag-label">Temas principais</div>
+            <div class="tags">
+              {% for t in data.main_themes %}<span class="tag">{{ t }}</span>{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if data.get('trends') %}
+          <div class="tag-group">
+            <div class="tag-label">Tendências</div>
+            <div class="tags">
+              {% for t in data.trends %}<span class="tag">{{ t }}</span>{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if data.get('recurring_questions') %}
+          <div class="tag-group">
+            <div class="tag-label">Perguntas recorrentes</div>
+            <div class="tags">
+              {% for q in data.recurring_questions %}<span class="tag">{{ q }}</span>{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if data.get('sentiment') %}
+          <span class="sentiment sentiment-{{ data.sentiment }}">
+            Sentimento: {{ data.sentiment }}{% if data.get('sentiment_explanation') %} — {{ data.sentiment_explanation }}{% endif %}
+          </span>
+          {% endif %}
+
+          {% if data.get('top_stocks') %}
+          <div class="top-posts">
+            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">Acções em destaque</div>
+            {% for stock in data.top_stocks %}
+            <div class="post-item" style="display:flex; align-items:flex-start; gap:10px;">
+              <span style="font-weight:700; font-size:14px; color:#18181b; min-width:60px;">{{ stock.ticker }}</span>
+              <div>
+                <div style="font-size:13px; color:#52525b;">{{ stock.company }}</div>
+                <div style="font-size:12px; color:#71717a; margin-top:2px;">{{ stock.reason }} · {{ stock.mentions }} menções · <span style="font-weight:600; color:{% if stock.sentiment == 'bullish' %}#15803d{% elif stock.sentiment == 'bearish' %}#b91c1c{% else %}#52525b{% endif %}">{{ stock.sentiment }}</span></div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if data.get('hidden_gems') %}
+          <div class="top-posts">
+            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">💎 Oportunidades pouco conhecidas</div>
+            {% for gem in data.hidden_gems %}
+            <div class="post-item">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:700; font-size:14px; color:#18181b;">{{ gem.ticker }}</span>
+                <span style="font-size:12px; color:#71717a;">{{ gem.company }}</span>
+                <span style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px;
+                  {% if gem.confidence_level == 'high' %}background:#dcfce7; color:#15803d;
+                  {% elif gem.confidence_level == 'medium' %}background:#fef9c3; color:#854d0e;
+                  {% else %}background:#f4f4f5; color:#52525b;{% endif %}">
+                  {{ gem.confidence_level }} confidence
+                </span>
+              </div>
+              <div class="post-reason" style="margin-top:4px;">{{ gem.why_bullish }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if data.get('sentiment_stats') %}
+          <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap;">
+            {% if data.sentiment_stats.get('most_bullish') %}
+            <div style="flex:1; min-width:200px; background:#f0fdf4; border-radius:8px; padding:12px 16px;">
+              <div class="tag-label" style="color:#15803d; margin-bottom:8px;">Mais optimistas</div>
+              {% for s in data.sentiment_stats.most_bullish %}
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div>
+                  <span style="font-weight:700; font-size:13px;">{{ s.ticker }}</span>
+                  <span style="font-size:12px; color:#52525b; margin-left:6px;">{{ s.reason }}</span>
+                </div>
+                <span style="font-weight:700; font-size:13px; color:#15803d;">{{ s.score }}%</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% if data.sentiment_stats.get('most_bearish') %}
+            <div style="flex:1; min-width:200px; background:#fef2f2; border-radius:8px; padding:12px 16px;">
+              <div class="tag-label" style="color:#b91c1c; margin-bottom:8px;">Mais pessimistas</div>
+              {% for s in data.sentiment_stats.most_bearish %}
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div>
+                  <span style="font-weight:700; font-size:13px;">{{ s.ticker }}</span>
+                  <span style="font-size:12px; color:#52525b; margin-left:6px;">{{ s.reason }}</span>
+                </div>
+                <span style="font-weight:700; font-size:13px; color:#b91c1c;">{{ s.score }}%</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {% if data.get('top_posts') %}
+          <div class="top-posts">
+            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">Posts em destaque</div>
+            {% for post in data.top_posts %}
+            <div class="post-item">
+              <div class="post-title">
+                {% if post.get('url') %}<a href="{{ post.url }}">{{ post.title }}</a>{% else %}{{ post.title }}{% endif %}
+              </div>
+              {% if post.get('why_popular') %}<div class="post-reason">{{ post.why_popular }}</div>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% if not loop.last %}<div class="divider"></div>{% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% set highlights = summary.get('weekly_highlights', []) %}
+      {% if highlights %}
+      <div class="divider"></div>
+      <div class="highlights-box">
+        <h3>Destaques do dia</h3>
+        <ul style="list-style:none; padding:0;">
+          {% for h in highlights %}<li>• {{ h }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </div>
+    <div class="footer">
+      Gerado automaticamente por Reddit Digest &nbsp;·&nbsp; Alimentado por Claude AI
+    </div>
+  </div>
+</body>
+</html>
