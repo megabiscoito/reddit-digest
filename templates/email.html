@@ -6,165 +6,399 @@
   <title>Reddit Digest</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f5; color: #18181b; }
-    .wrapper { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
-    .header { background: #ff4500; border-radius: 12px 12px 0 0; padding: 28px 32px; text-align: center; }
-    .header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-    .header p { color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 4px; }
-    .body { background: #fff; padding: 32px; border-radius: 0 0 12px 12px; }
-    .section { margin-bottom: 32px; }
-    .section:last-child { margin-bottom: 0; }
-    .subreddit-title { font-size: 18px; font-weight: 700; color: #ff4500; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #f4f4f5; }
-    .tag-group { margin-bottom: 12px; }
-    .tag-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #71717a; margin-bottom: 6px; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag { background: #f4f4f5; border-radius: 20px; padding: 4px 12px; font-size: 13px; color: #3f3f46; }
-    .sentiment { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 8px; }
-    .sentiment-positivo { background: #dcfce7; color: #15803d; }
-    .sentiment-negativo { background: #fee2e2; color: #b91c1c; }
-    .sentiment-neutro { background: #f4f4f5; color: #52525b; }
-    .sentiment-misto { background: #fef9c3; color: #854d0e; }
-    .top-posts { margin-top: 14px; }
-    .post-item { padding: 10px 0; border-bottom: 1px solid #f4f4f5; }
-    .post-item:last-child { border-bottom: none; }
-    .post-title { font-size: 14px; font-weight: 500; color: #18181b; }
-    .post-title a { color: #18181b; text-decoration: none; }
-    .post-title a:hover { color: #ff4500; }
-    .post-reason { font-size: 12px; color: #71717a; margin-top: 3px; }
-    .insights-box { background: #fff7ed; border-left: 4px solid #ff4500; border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; }
-    .insights-box h3 { font-size: 14px; font-weight: 600; color: #c2410c; margin-bottom: 10px; }
-    .insights-box ul { padding-left: 18px; }
-    .insights-box li { font-size: 14px; color: #431407; margin-bottom: 6px; line-height: 1.5; }
-    .highlights-box { background: #fafafa; border-radius: 8px; padding: 16px 20px; }
-    .highlights-box h3 { font-size: 14px; font-weight: 600; color: #3f3f46; margin-bottom: 10px; }
-    .highlights-box li { font-size: 14px; color: #52525b; margin-bottom: 6px; line-height: 1.5; padding-left: 18px; }
-    .footer { text-align: center; padding: 20px; font-size: 12px; color: #a1a1aa; }
-    .divider { height: 1px; background: #f4f4f5; margin: 24px 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f0f2; color: #1a1a2e; }
+    a { color: inherit; text-decoration: none; }
+    .wrapper { max-width: 660px; margin: 0 auto; padding: 28px 16px; }
+
+    /* HEADER */
+    .header { background: linear-gradient(135deg, #ff4500 0%, #ff6a33 100%); border-radius: 16px 16px 0 0; padding: 32px 36px 28px; position: relative; overflow: hidden; }
+    .header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255,255,255,0.07); border-radius: 50%; }
+    .header::after { content: ''; position: absolute; bottom: -60px; left: 30px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .header-inner { position: relative; z-index: 1; }
+    .header h1 { color: #fff; font-size: 26px; font-weight: 800; letter-spacing: -0.8px; }
+    .header-sub { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .header-badge { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 600; color: #fff; }
+
+    /* BODY */
+    .body { background: #fff; padding: 0; border-radius: 0 0 16px 16px; overflow: hidden; }
+
+    /* INSIGHTS STRIP */
+    .insights-strip { background: #fff8f5; border-bottom: 1px solid #ffe8e0; padding: 20px 32px; }
+    .insights-strip h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ff4500; margin-bottom: 12px; }
+    .insight-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+    .insight-item:last-child { margin-bottom: 0; }
+    .insight-num { background: #ff4500; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .insight-text { font-size: 13px; color: #3d1a0a; line-height: 1.55; }
+
+    /* SECTION */
+    .section { padding: 28px 32px; border-top: 1px solid #f0f0f2; }
+    .section:first-child { border-top: none; }
+
+    /* SUBREDDIT HEADER */
+    .subreddit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .subreddit-name { font-size: 17px; font-weight: 800; color: #ff4500; letter-spacing: -0.3px; }
+    .sentiment-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .s-bullish { background: #dcfce7; color: #15803d; }
+    .s-bearish { background: #fee2e2; color: #b91c1c; }
+    .s-neutral { background: #f4f4f5; color: #52525b; }
+    .s-mixed { background: #fef9c3; color: #92400e; }
+
+    /* ANALYSIS */
+    .analysis { font-size: 13.5px; line-height: 1.75; color: #374151; margin-bottom: 18px; padding: 16px; background: #fafafa; border-radius: 8px; border-left: 3px solid #ff4500; }
+
+    /* TAGS */
+    .tag-block { margin-bottom: 14px; }
+    .tag-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 7px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { background: #f4f4f5; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #374151; font-weight: 500; }
+    .tag-q { background: #eff6ff; color: #1e40af; }
+
+    /* TICKER RADAR */
+    .radar-block { margin: 18px 0; background: #0f172a; border-radius: 10px; padding: 16px 18px; }
+    .radar-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #38bdf8; margin-bottom: 12px; }
+    .radar-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .radar-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .radar-question { font-size: 12.5px; font-weight: 600; color: #e2e8f0; line-height: 1.45; margin-bottom: 6px; }
+    .radar-question a { color: #e2e8f0; }
+    .radar-context { font-size: 11px; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
+    .radar-tickers { display: flex; flex-wrap: wrap; gap: 5px; }
+    .radar-ticker { background: #1e3a5f; color: #38bdf8; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 5px; letter-spacing: 0.5px; }
+
+    /* STOCKS TABLE */
+    .stocks-block { margin: 18px 0; }
+    .stock-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f4f4f5; }
+    .stock-row:last-child { border-bottom: none; }
+    .ticker-badge { background: #1a1a2e; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 5px; min-width: 52px; text-align: center; flex-shrink: 0; letter-spacing: 0.3px; }
+    .stock-info { flex: 1; }
+    .stock-company { font-size: 12px; font-weight: 600; color: #374151; }
+    .stock-reason { font-size: 12px; color: #6b7280; margin-top: 2px; line-height: 1.5; }
+    .stock-meta { display: flex; gap: 8px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+    .mentions-badge { font-size: 11px; color: #9ca3af; }
+    .sent-bull { font-size: 11px; font-weight: 700; color: #15803d; }
+    .sent-bear { font-size: 11px; font-weight: 700; color: #b91c1c; }
+    .sent-neut { font-size: 11px; font-weight: 700; color: #6b7280; }
+
+    /* MODE PICKS */
+    .mode-section { margin: 18px 0; }
+    .mode-card { border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+    .mode-card:last-child { margin-bottom: 0; }
+    .mode-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
+    .mode-pick-row { padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+    .mode-pick-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .mode-pick-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .mode-ticker { font-size: 12px; font-weight: 800; }
+    .mode-company { font-size: 11px; opacity: 0.7; }
+    .mode-megatrend { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+    .mode-thesis { font-size: 12px; margin-top: 3px; opacity: 0.8; line-height: 1.5; }
+
+    .m1 { background: #eff6ff; } .m1 .mode-title { color: #1d4ed8; } .m1 .mode-ticker { color: #1d4ed8; } .m1 .mode-megatrend { background: #dbeafe; color: #1e40af; }
+    .m2 { background: #f0fdf4; } .m2 .mode-title { color: #15803d; } .m2 .mode-ticker { color: #15803d; }
+    .m3 { background: #fefce8; } .m3 .mode-title { color: #a16207; } .m3 .mode-ticker { color: #a16207; }
+    .m4 { background: #fff7ed; } .m4 .mode-title { color: #c2410c; } .m4 .mode-ticker { color: #c2410c; }
+    .m5 { background: #fdf4ff; } .m5 .mode-title { color: #7e22ce; } .m5 .mode-ticker { color: #7e22ce; }
+
+    /* HIDDEN GEMS */
+    .gem-row { padding: 10px 0; border-bottom: 1px solid #f4f4f5; }
+    .gem-row:last-child { border-bottom: none; }
+    .gem-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .conf-high { background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .conf-medium { background: #fef9c3; color: #92400e; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .conf-low { background: #f4f4f5; color: #52525b; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .gem-thesis { font-size: 12px; color: #6b7280; margin-top: 4px; line-height: 1.5; }
+
+    /* SENTIMENT SCORES */
+    .score-grid { display: flex; gap: 10px; margin: 18px 0; flex-wrap: wrap; }
+    .score-card { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 16px; }
+    .score-card-bull { background: #f0fdf4; }
+    .score-card-bear { background: #fef2f2; }
+    .score-card-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .score-card-bull .score-card-title { color: #15803d; }
+    .score-card-bear .score-card-title { color: #b91c1c; }
+    .score-row { margin-bottom: 8px; }
+    .score-row:last-child { margin-bottom: 0; }
+    .score-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .score-ticker-label { font-size: 12px; font-weight: 700; color: #1a1a2e; }
+    .score-val-bull { font-size: 12px; font-weight: 800; color: #15803d; }
+    .score-val-bear { font-size: 12px; font-weight: 800; color: #b91c1c; }
+    .score-reason { font-size: 11px; color: #6b7280; margin-bottom: 4px; line-height: 1.4; }
+    .bar-track { background: rgba(0,0,0,0.08); border-radius: 4px; height: 4px; overflow: hidden; }
+    .bar-fill-bull { background: #22c55e; height: 4px; border-radius: 4px; }
+    .bar-fill-bear { background: #ef4444; height: 4px; border-radius: 4px; }
+
+    /* TOP POSTS */
+    .post-row { padding: 10px 0; border-bottom: 1px solid #f4f4f5; }
+    .post-row:last-child { border-bottom: none; }
+    .post-link { font-size: 13px; font-weight: 600; color: #1a1a2e; line-height: 1.45; }
+    .post-link:hover { color: #ff4500; }
+    .post-why { font-size: 12px; color: #6b7280; margin-top: 3px; line-height: 1.5; }
+
+    /* ALL POSTS */
+    .all-posts-block { margin-top: 18px; background: #fafafa; border-radius: 8px; padding: 14px 16px; }
+    .all-posts-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 10px; }
+    .raw-post-row { padding: 7px 0; border-bottom: 1px solid #efefef; }
+    .raw-post-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .raw-post-link { font-size: 12.5px; font-weight: 500; color: #374151; line-height: 1.4; }
+    .raw-post-snippet { font-size: 11px; color: #9ca3af; margin-top: 2px; line-height: 1.45; }
+
+    /* HIGHLIGHTS */
+    .highlights { background: #1a1a2e; border-radius: 0 0 16px 16px; padding: 22px 32px; }
+    .highlights h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 12px; }
+    .highlight-item { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+    .highlight-item:last-child { margin-bottom: 0; }
+    .highlight-dot { width: 6px; height: 6px; background: #ff4500; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .highlight-text { font-size: 13px; color: #d1d5db; line-height: 1.55; }
+
+    /* FOOTER */
+    .footer { text-align: center; padding: 18px; font-size: 11px; color: #9ca3af; }
   </style>
 </head>
 <body>
   <div class="wrapper">
+
+    <!-- HEADER -->
     <div class="header">
-      <h1>Reddit Digest</h1>
-      <p>{{ today }}</p>
+      <div class="header-inner">
+        <h1>Reddit Digest</h1>
+        <div class="header-sub">
+          <span>{{ today }}</span>
+          <span class="header-badge">{{ subreddits | length }} comunidades</span>
+          <span class="header-badge">{{ raw_posts.values() | map('length') | sum }} posts</span>
+        </div>
+      </div>
     </div>
+
     <div class="body">
 
+      <!-- CROSS-SUBREDDIT INSIGHTS -->
       {% set cross = summary.get('cross_subreddit_insights', []) %}
       {% if cross %}
-      <div class="insights-box">
+      <div class="insights-strip">
         <h3>Insights entre comunidades</h3>
-        <ul>
-          {% for item in cross %}<li>{{ item }}</li>{% endfor %}
-        </ul>
+        {% for item in cross %}
+        <div class="insight-item">
+          <div class="insight-num">{{ loop.index }}</div>
+          <div class="insight-text">{% if item is mapping %}{{ item.insight or item | string }}{% else %}{{ item }}{% endif %}</div>
+        </div>
+        {% endfor %}
       </div>
       {% endif %}
 
+      <!-- PER-SUBREDDIT SECTIONS -->
       {% for name in subreddits %}
         {% set data = summary.get('subreddits', {}).get(name, {}) %}
         {% if data %}
         <div class="section">
-          <div class="subreddit-title">r/{{ name }}</div>
 
+          <!-- Subreddit header -->
+          <div class="subreddit-header">
+            <div class="subreddit-name">r/{{ name }}</div>
+            {% if data.get('sentiment') %}
+            <span class="sentiment-pill s-{{ data.sentiment }}">
+              {% if data.sentiment == 'bullish' %}▲{% elif data.sentiment == 'bearish' %}▼{% else %}◆{% endif %}
+              {{ data.sentiment | capitalize }}
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- Analysis -->
           {% if data.get('analysis') %}
-          <div style="font-size:14px; line-height:1.7; color:#3f3f46; margin-bottom:16px; white-space:pre-line;">{{ data.analysis }}</div>
+          <div class="analysis">{{ data.analysis }}</div>
           {% endif %}
 
+          <!-- Themes + Trends + Questions -->
           {% if data.get('main_themes') %}
-          <div class="tag-group">
+          <div class="tag-block">
             <div class="tag-label">Temas principais</div>
-            <div class="tags">
-              {% for t in data.main_themes %}<span class="tag">{{ t }}</span>{% endfor %}
-            </div>
+            <div class="tags">{% for t in data.main_themes %}<span class="tag">{{ t }}</span>{% endfor %}</div>
           </div>
           {% endif %}
 
           {% if data.get('trends') %}
-          <div class="tag-group">
+          <div class="tag-block">
             <div class="tag-label">Tendências</div>
-            <div class="tags">
-              {% for t in data.trends %}<span class="tag">{{ t }}</span>{% endfor %}
-            </div>
+            <div class="tags">{% for t in data.trends %}<span class="tag">{{ t }}</span>{% endfor %}</div>
           </div>
           {% endif %}
 
           {% if data.get('recurring_questions') %}
-          <div class="tag-group">
+          <div class="tag-block">
             <div class="tag-label">Perguntas recorrentes</div>
-            <div class="tags">
-              {% for q in data.recurring_questions %}<span class="tag">{{ q }}</span>{% endfor %}
-            </div>
+            <div class="tags">{% for q in data.recurring_questions %}<span class="tag tag-q">{{ q }}</span>{% endfor %}</div>
           </div>
           {% endif %}
 
-          {% if data.get('sentiment') %}
-          <span class="sentiment sentiment-{{ data.sentiment }}">
-            Sentimento: {{ data.sentiment }}{% if data.get('sentiment_explanation') %} — {{ data.sentiment_explanation }}{% endif %}
-          </span>
+          <!-- Ticker Radar -->
+          {% if data.get('ticker_radar') %}
+          <div class="radar-block">
+            <div class="radar-title">📡 Radar de Tickers — pedidos de picks</div>
+            {% for item in data.ticker_radar %}
+            <div class="radar-item">
+              <div class="radar-question">
+                {% if item.get('url') %}<a href="{{ item.url }}">{{ item.question }}</a>{% else %}{{ item.question }}{% endif %}
+              </div>
+              {% if item.get('context') %}<div class="radar-context">{{ item.context }}</div>{% endif %}
+              {% if item.get('tickers') %}
+              <div class="radar-tickers">
+                {% for t in item.tickers %}<span class="radar-ticker">{{ t }}</span>{% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
           {% endif %}
 
+          <!-- Top Stocks -->
           {% if data.get('top_stocks') %}
-          <div class="top-posts">
-            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">Acções em destaque</div>
+          <div class="stocks-block">
+            <div class="tag-label" style="margin-bottom:8px;">Acções em destaque</div>
             {% for stock in data.top_stocks %}
-            <div class="post-item" style="display:flex; align-items:flex-start; gap:10px;">
-              <span style="font-weight:700; font-size:14px; color:#18181b; min-width:60px;">{{ stock.ticker }}</span>
-              <div>
-                <div style="font-size:13px; color:#52525b;">{{ stock.company }}</div>
-                <div style="font-size:12px; color:#71717a; margin-top:2px;">{{ stock.reason }} · {{ stock.mentions }} menções · <span style="font-weight:600; color:{% if stock.sentiment == 'bullish' %}#15803d{% elif stock.sentiment == 'bearish' %}#b91c1c{% else %}#52525b{% endif %}">{{ stock.sentiment }}</span></div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
-
-          {% if data.get('hidden_gems') %}
-          <div class="top-posts">
-            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">💎 Oportunidades pouco conhecidas</div>
-            {% for gem in data.hidden_gems %}
-            <div class="post-item">
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-weight:700; font-size:14px; color:#18181b;">{{ gem.ticker }}</span>
-                <span style="font-size:12px; color:#71717a;">{{ gem.company }}</span>
-                <span style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px;
-                  {% if gem.confidence_level == 'high' %}background:#dcfce7; color:#15803d;
-                  {% elif gem.confidence_level == 'medium' %}background:#fef9c3; color:#854d0e;
-                  {% else %}background:#f4f4f5; color:#52525b;{% endif %}">
-                  {{ gem.confidence_level }} confidence
-                </span>
-              </div>
-              <div class="post-reason" style="margin-top:4px;">{{ gem.why_bullish }}</div>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
-
-          {% if data.get('sentiment_stats') %}
-          <div style="margin-top:14px; display:flex; gap:12px; flex-wrap:wrap;">
-            {% if data.sentiment_stats.get('most_bullish') %}
-            <div style="flex:1; min-width:200px; background:#f0fdf4; border-radius:8px; padding:12px 16px;">
-              <div class="tag-label" style="color:#15803d; margin-bottom:8px;">Mais optimistas</div>
-              {% for s in data.sentiment_stats.most_bullish %}
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <div>
-                  <span style="font-weight:700; font-size:13px;">{{ s.ticker }}</span>
-                  <span style="font-size:12px; color:#52525b; margin-left:6px;">{{ s.reason }}</span>
+            <div class="stock-row">
+              <span class="ticker-badge">{{ stock.ticker }}</span>
+              <div class="stock-info">
+                <div class="stock-company">{{ stock.company }}</div>
+                <div class="stock-reason">{{ stock.reason }}</div>
+                <div class="stock-meta">
+                  <span class="mentions-badge">{{ stock.mentions }} menções</span>
+                  <span class="{% if stock.sentiment == 'bullish' %}sent-bull{% elif stock.sentiment == 'bearish' %}sent-bear{% else %}sent-neut{% endif %}">
+                    {{ stock.sentiment }}
+                  </span>
                 </div>
-                <span style="font-weight:700; font-size:13px; color:#15803d;">{{ s.score }}%</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Mode Picks -->
+          {% set mp = data.get('mode_picks', {}) %}
+          {% set has_picks = mp.get('modo1_supply_chain') or mp.get('modo2_early_detection') or mp.get('modo3_momentum_ascent') or mp.get('modo4_recuperacao_ciclica') or mp.get('modo5_large_cap_turnaround') %}
+          {% if has_picks %}
+          <div class="mode-section">
+            <div class="tag-label" style="margin-bottom:10px;">Picks por modo</div>
+
+            {% if mp.get('modo1_supply_chain') %}
+            <div class="mode-card m1">
+              <div class="mode-title">M1 — Supply Chain</div>
+              {% for pick in mp.modo1_supply_chain %}
+              <div class="mode-pick-row">
+                <div class="mode-pick-header">
+                  <span class="mode-ticker">{{ pick.ticker }}</span>
+                  <span class="mode-company">{{ pick.company }}</span>
+                  {% if pick.megatrend %}<span class="mode-megatrend m1">{{ pick.megatrend }}</span>{% endif %}
+                </div>
+                <div class="mode-thesis">{{ pick.thesis }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if mp.get('modo2_early_detection') %}
+            <div class="mode-card m2">
+              <div class="mode-title">M2 — Early Detection</div>
+              {% for pick in mp.modo2_early_detection %}
+              <div class="mode-pick-row">
+                <div class="mode-pick-header">
+                  <span class="mode-ticker">{{ pick.ticker }}</span>
+                  <span class="mode-company">{{ pick.company }}</span>
+                </div>
+                <div class="mode-thesis">{{ pick.thesis }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if mp.get('modo3_momentum_ascent') %}
+            <div class="mode-card m3">
+              <div class="mode-title">M3 — Momentum Ascent</div>
+              {% for pick in mp.modo3_momentum_ascent %}
+              <div class="mode-pick-row">
+                <div class="mode-pick-header">
+                  <span class="mode-ticker">{{ pick.ticker }}</span>
+                  <span class="mode-company">{{ pick.company }}</span>
+                </div>
+                <div class="mode-thesis">{{ pick.thesis }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if mp.get('modo4_recuperacao_ciclica') %}
+            <div class="mode-card m4">
+              <div class="mode-title">M4 — Recuperação Cíclica</div>
+              {% for pick in mp.modo4_recuperacao_ciclica %}
+              <div class="mode-pick-row">
+                <div class="mode-pick-header">
+                  <span class="mode-ticker">{{ pick.ticker }}</span>
+                  <span class="mode-company">{{ pick.company }}</span>
+                </div>
+                <div class="mode-thesis">{{ pick.thesis }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if mp.get('modo5_large_cap_turnaround') %}
+            <div class="mode-card m5">
+              <div class="mode-title">M5 — Large Cap Turnaround</div>
+              {% for pick in mp.modo5_large_cap_turnaround %}
+              <div class="mode-pick-row">
+                <div class="mode-pick-header">
+                  <span class="mode-ticker">{{ pick.ticker }}</span>
+                  <span class="mode-company">{{ pick.company }}</span>
+                </div>
+                <div class="mode-thesis">{{ pick.thesis }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+          </div>
+          {% endif %}
+
+          <!-- Hidden Gems -->
+          {% if data.get('hidden_gems') %}
+          <div class="tag-label" style="margin-top:18px; margin-bottom:8px;">Oportunidades pouco conhecidas</div>
+          {% for gem in data.hidden_gems %}
+          <div class="gem-row">
+            <div class="gem-header">
+              <span class="ticker-badge">{{ gem.ticker }}</span>
+              <span style="font-size:12px; font-weight:600; color:#374151;">{{ gem.company }}</span>
+              <span class="conf-{{ gem.confidence_level }}">{{ gem.confidence_level }}</span>
+            </div>
+            <div class="gem-thesis">{{ gem.why_bullish }}</div>
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <!-- Sentiment Scores -->
+          {% if data.get('sentiment_stats') %}
+          <div class="score-grid">
+            {% if data.sentiment_stats.get('most_bullish') %}
+            <div class="score-card score-card-bull">
+              <div class="score-card-title">Mais optimistas</div>
+              {% for s in data.sentiment_stats.most_bullish %}
+              <div class="score-row">
+                <div class="score-row-header">
+                  <span class="score-ticker-label">{{ s.ticker }}</span>
+                  <span class="score-val-bull">{{ s.score }}%</span>
+                </div>
+                <div class="score-reason">{{ s.reason }}</div>
+                <div class="bar-track"><div class="bar-fill-bull" style="width:{{ s.score }}%"></div></div>
               </div>
               {% endfor %}
             </div>
             {% endif %}
             {% if data.sentiment_stats.get('most_bearish') %}
-            <div style="flex:1; min-width:200px; background:#fef2f2; border-radius:8px; padding:12px 16px;">
-              <div class="tag-label" style="color:#b91c1c; margin-bottom:8px;">Mais pessimistas</div>
+            <div class="score-card score-card-bear">
+              <div class="score-card-title">Mais pessimistas</div>
               {% for s in data.sentiment_stats.most_bearish %}
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <div>
-                  <span style="font-weight:700; font-size:13px;">{{ s.ticker }}</span>
-                  <span style="font-size:12px; color:#52525b; margin-left:6px;">{{ s.reason }}</span>
+              <div class="score-row">
+                <div class="score-row-header">
+                  <span class="score-ticker-label">{{ s.ticker }}</span>
+                  <span class="score-val-bear">{{ s.score }}%</span>
                 </div>
-                <span style="font-weight:700; font-size:13px; color:#b91c1c;">{{ s.score }}%</span>
+                <div class="score-reason">{{ s.reason }}</div>
+                <div class="bar-track"><div class="bar-fill-bear" style="width:{{ s.score }}%"></div></div>
               </div>
               {% endfor %}
             </div>
@@ -172,39 +406,57 @@
           </div>
           {% endif %}
 
+          <!-- Top Posts -->
           {% if data.get('top_posts') %}
-          <div class="top-posts">
-            <div class="tag-label" style="margin-top:14px; margin-bottom:8px;">Posts em destaque</div>
-            {% for post in data.top_posts %}
-            <div class="post-item">
-              <div class="post-title">
-                {% if post.get('url') %}<a href="{{ post.url }}">{{ post.title }}</a>{% else %}{{ post.title }}{% endif %}
-              </div>
-              {% if post.get('why_popular') %}<div class="post-reason">{{ post.why_popular }}</div>{% endif %}
+          <div class="tag-label" style="margin-top:18px; margin-bottom:8px;">Posts em destaque</div>
+          {% for post in data.top_posts %}
+          <div class="post-row">
+            <div class="post-link">
+              {% if post.get('url') %}<a href="{{ post.url }}" class="post-link">{{ post.title }}</a>{% else %}{{ post.title }}{% endif %}
+            </div>
+            {% if post.get('why_popular') %}<div class="post-why">{{ post.why_popular }}</div>{% endif %}
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <!-- All Posts -->
+          {% set posts = raw_posts.get(name, []) %}
+          {% if posts %}
+          <div class="all-posts-block">
+            <div class="all-posts-title">Todos os posts — {{ posts | length }}</div>
+            {% for post in posts %}
+            <div class="raw-post-row">
+              <div><a href="{{ post.permalink }}" class="raw-post-link">{{ post.title }}</a></div>
+              {% if post.selftext %}<div class="raw-post-snippet">{{ post.selftext[:130] }}{% if post.selftext | length > 130 %}…{% endif %}</div>{% endif %}
             </div>
             {% endfor %}
           </div>
           {% endif %}
+
         </div>
-        {% if not loop.last %}<div class="divider"></div>{% endif %}
         {% endif %}
       {% endfor %}
 
+      <!-- HIGHLIGHTS -->
       {% set highlights = summary.get('weekly_highlights', []) %}
       {% if highlights %}
-      <div class="divider"></div>
-      <div class="highlights-box">
+      <div class="highlights">
         <h3>Destaques do dia</h3>
-        <ul style="list-style:none; padding:0;">
-          {% for h in highlights %}<li>• {{ h }}</li>{% endfor %}
-        </ul>
+        {% for h in highlights %}
+        <div class="highlight-item">
+          <div class="highlight-dot"></div>
+          <div class="highlight-text">{{ h }}</div>
+        </div>
+        {% endfor %}
       </div>
       {% endif %}
 
     </div>
+
     <div class="footer">
-      Gerado automaticamente por Reddit Digest &nbsp;·&nbsp; Alimentado por Claude AI
+      Gerado automaticamente · Reddit Digest · Claude AI
     </div>
+
   </div>
 </body>
 </html>

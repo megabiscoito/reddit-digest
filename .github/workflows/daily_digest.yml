@@ -1,9 +1,7 @@
 name: Reddit Digest
 
 on:
-  schedule:
-    - cron: '0 8 * * *'        # diário — 8h UTC = 9h Lisboa (inverno) / 10h Lisboa (verão)
-    - cron: '0 8 * * 0'        # semanal — domingo às 8h UTC (substitui o diário desse dia)
+  # Schedule desactivado — digest corre via Windows Task Scheduler
   workflow_dispatch:
     inputs:
       digest_mode:
@@ -42,4 +40,4 @@ jobs:
           SUBREDDITS: ${{ vars.SUBREDDITS }}
           POSTS_PER_SUBREDDIT: ${{ vars.POSTS_PER_SUBREDDIT }}
           TOP_COMMENTS_COUNT: ${{ vars.TOP_COMMENTS_COUNT }}
-          DIGEST_MODE: ${{ github.event_name == 'schedule' && github.event.schedule == '0 8 * * 0' && 'weekly' || inputs.digest_mode || 'daily' }}
+          DIGEST_MODE: ${{ inputs.digest_mode || 'daily' }}
